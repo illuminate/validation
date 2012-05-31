@@ -49,6 +49,16 @@ class Factory {
 	}
 
 	/**
+	 * Get the Translator implementation.
+	 *
+	 * @return Symfony\Component\Translation\TranslatorInterface
+	 */
+	public function getTranslator()
+	{
+		return $this->translator;
+	}
+
+	/**
 	 * Get the Presence Verifier implementation.
 	 *
 	 * @return Illuminate\Validation\PresenceVerifierInterface
