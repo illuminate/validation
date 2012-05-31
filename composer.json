@@ -1,0 +1,17 @@
+{
+    "name": "illuminate/validation",
+    "description": "An amazingly simple validation library for PHP.",
+    "authors": [
+        {
+            "name": "Taylor Otwell",
+            "email": "taylorotwell@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/http-foundation": "2.1.*"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
