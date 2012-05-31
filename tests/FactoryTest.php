@@ -20,6 +20,11 @@ class FactoryTest extends PHPUnit_Framework_TestCase {
 		$this->assertNull($validator->getPresenceVerifier());
 		$this->assertEquals(array('foo' => 'bar'), $validator->getData());
 		$this->assertEquals(array('baz' => 'boom'), $validator->getRules());
+
+		$presence = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+		$factory->setPresenceVerifier($presence);
+		$validator = $factory->make(array(), array());
+		$this->assertEquals($presence, $validator->getPresenceVerifier());
 	}
 
 }
