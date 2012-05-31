@@ -1,5 +1,7 @@
 <?php namespace Illuminate\Validation;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 class Validator {
 
 	/**
@@ -8,6 +10,13 @@ class Validator {
 	 * @var Symfony\Component\Translation\TranslatorInterface
 	 */
 	protected $translator;
+
+	/**
+	 * The Presence Verifier implementation.
+	 *
+	 * @var Illuminate\Validation\PresenceVerifierInterface
+	 */
+	protected $presenceVerifier;
 
 	/**
 	 * The data under validation.
@@ -64,6 +73,27 @@ class Validator {
 	public function setFiles(array $files)
 	{
 		$this->files = $files;
+	}
+
+	/**
+	 * Get the Presence Verifier implementation.
+	 *
+	 * @return Illuminate\Validation\PresenceVerifierInterface
+	 */
+	public function getPresenceVerifier()
+	{
+		return $this->presenceVerifier;
+	}
+
+	/**
+	 * Set the Presence Verifier implementation.
+	 *
+	 * @param  Illuminate\Validation\PresenceVerifierInterface  $presenceVerifier
+	 * @return void
+	 */
+	public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
+	{
+		$this->presenceVerifier = $presenceVerifier;
 	}
 
 	/**
