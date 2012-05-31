@@ -55,6 +55,26 @@ class Validator {
 	}
 
 	/**
+	 * Get the data under validation.
+	 *
+	 * @return array
+	 */
+	public function getData()
+	{
+		return $this->data;
+	}
+
+	/**
+	 * Get the validation rules.
+	 *
+	 * @return array
+	 */
+	public function getRules()
+	{
+		return $this->rules;
+	}
+
+	/**
 	 * Get the files under validation.
 	 *
 	 * @return array
