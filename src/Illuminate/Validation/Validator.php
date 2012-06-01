@@ -69,7 +69,7 @@ class Validator {
 	 * @param  array  $rules
 	 * @return void
 	 */
-	public function __construct(TranslatorInterface $translator, array $data, array $rules)
+	public function __construct(TranslatorInterface $translator, $data, $rules)
 	{
 		$this->data = $data;
 		$this->translator = $translator;
@@ -229,7 +229,7 @@ class Validator {
 		}
 		elseif ($value instanceof File)
 		{
-			return $value->getPath() !== '';
+			return (string) $value->getPath() !== '';
 		}
 
 		return true;
