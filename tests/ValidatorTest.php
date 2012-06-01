@@ -40,6 +40,16 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testCustomValidationLinesAreRespected()
+	{
+		$trans = $this->getRealTranslator();
+		$trans->addResource('array', array('validation.required' => 'required!', 'validation.custom.name.required' => 'really required!'), 'en', 'messages');
+		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
+		$this->assertFalse($v->passes());
+		$this->assertEquals('really required!', $v->errors->first('name'));
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
