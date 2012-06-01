@@ -37,7 +37,7 @@ class Validator {
 	 *
 	 * @var array
 	 */
-	protected $files;
+	protected $files = array();
 
 	/**
 	 * The rules to be applied to the data.
@@ -255,6 +255,269 @@ class Validator {
 		$other = $parameters[0];
 
 		return isset($this->data[$other]) and $value == $this->data[$other];
+	}
+
+	/**
+	 * Validate that an attribute is different from another attribute.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateDifferent($attribute, $value, $parameters)
+	{
+		$other = $parameters[0];
+
+		return isset($this->attributes[$other]) and $value != $this->attributes[$other];
+	}
+
+	/**
+	 * Validate that an attribute was "accepted".
+	 *
+	 * This validation rule implies the attribute is "required".
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateAccepted($attribute, $value)
+	{
+		return $this->validateRequired($attribute, $value) and ($value == 'yes' or $value == '1');
+	}
+
+	/**
+	 * Validate that an attribute is numeric.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateNumeric($attribute, $value)
+	{
+		return is_numeric($value);
+	}
+
+	/**
+	 * Validate that an attribute is an integer.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateInteger($attribute, $value)
+	{
+		return filter_var($value, FILTER_VALIDATE_INT) !== false;
+	}
+
+	/**
+	 * Validate the size of an attribute.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateSize($attribute, $value, $parameters)
+	{
+		return $this->getSize($attribute, $value) == $parameters[0];
+	}
+
+	/**
+	 * Validate the size of an attribute is between a set of values.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateBetween($attribute, $value, $parameters)
+	{
+		$size = $this->getSize($attribute, $value);
+
+		return $size >= $parameters[0] and $size <= $parameters[1];
+	}
+
+	/**
+	 * Validate the size of an attribute is greater than a minimum value.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateMin($attribute, $value, $parameters)
+	{
+		return $this->getSize($attribute, $value) >= $parameters[0];
+	}
+
+	/**
+	 * Validate the size of an attribute is less than a maximum value.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateMax($attribute, $value, $parameters)
+	{
+		return $this->getSize($attribute, $value) <= $parameters[0];
+	}
+
+	/*
+	 * Get the size of an attribute.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return mixed
+	 */
+	protected function getSize($attribute, $value)
+	{
+	 	// This method will determine if the attribute is a number, string, or file and
+	 	// return the proper size accordingly. If it is a number, then number itself
+	 	// is the size. If it is a file, we take kilobytes, and for a string the
+	 	// entire length of the string will be considered the attribute size.
+		if (is_numeric($value) and $this->hasRule($attribute, $this->numericRules))
+		{
+			return $this->attributes[$attribute];
+		}
+		elseif (array_key_exists($attribute, $this->files))
+		{
+			return $value['size'] / 1024;
+		}
+		else
+		{
+			return $this->getStringSize($value);
+		}
+	}
+
+	/**
+	 * Get the size of a string.
+	 *
+	 * @param  string  $value
+	 * @return int
+	 */
+	protected function getStringSize($value)
+	{
+		if (function_exists('mb_strlen')) return mb_strlen($value);
+
+		return strlen($value);
+	}
+
+	/**
+	 * Validate an attribute is contained within a list of values.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateIn($attribute, $value, $parameters)
+	{
+		return in_array($value, $parameters);
+	}
+
+	/**
+	 * Validate an attribute is not contained within a list of values.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateNotIn($attribute, $value, $parameters)
+	{
+		return ! in_array($value, $parameters);
+	}
+
+	/**
+	 * Validate the uniqueness of an attribute value on a given database table.
+	 *
+	 * If a database column is not specified, the attribute will be used.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateUnique($attribute, $value, $parameters)
+	{
+		$table = $parameters[0];
+
+		// The second parameter position holds the name of the column that should
+		// be verified as unique. If this parameter is not specified we will
+		// assume that the column to be verified has the attribute name.
+		if (isset($parameters[1]))
+		{
+			$column = $parameters[1];
+		}
+		else
+		{
+			$column = $attribute;
+		}
+
+		// The third parameter spot holds the ID value that will be excluded from
+		// the query when checking for uniqueness. This is useful for ignoring
+		// the current value of e-mail address fields when updating a user.
+		if (isset($parameters[2]))
+		{
+			$idColumn = isset($parameters[3]) ? $parameters[3] : 'id';
+
+			$excludeId = $parameters[2];
+		}
+
+		// Finally we get an instance of the presence verifier implementation and
+		// verify that the value is in fact unique for the given column on the
+		// data store being checked by the presence verifier implementation.
+		$verifier = $this->getPresenceVerifier();
+
+		return $verifier->verifyUnique($table, $column, $excludeId, $idColumn);
+	}
+
+	/**
+	 * Validate the existence of an attribute value in a database table.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateExists($attribute, $value, $parameters)
+	{
+		$table = $parameters[0];
+
+		// The second parameter position holds the name of the column that should
+		// be verified as existing. If this parameter is not specified we'll
+		// assume that the column to be verified has the attribute name.
+		if (isset($parameters[1]))
+		{
+			$column = $parameters[1];
+		}
+		else
+		{
+			$column = $attribute;
+		}
+
+		$expectedCount = (is_array($value)) ? count($value) : 1;
+
+		// If the given value is actually an array, we will tell the verifier we
+		// need to count the existence of multiple objects so it can utilize
+		// a "where in" type of statement when querying the data source.
+		$verifier = $this->getPresenceVerifier();
+
+		if (is_array($value))
+		{
+			$actualCount = $verifier->getMultiCount($table, $column, $value);
+		}
+		else
+		{
+			$actualCount = $verifier->getCount($table, $column, $value);
+		}
+
+		// Finally, if the actual count of objects matching the given values in
+		// our parameters matches the number of parameter values we can know
+		// that all of the values given actually exist in the data store.
+		return $actualCount >= $expectedCount;
 	}
 
 	/**
@@ -633,6 +896,11 @@ class Validator {
 	 */
 	public function getPresenceVerifier()
 	{
+		if ( ! isset($this->presenceVerifier))
+		{
+			throw new \RuntimeException("Presence verifier has not been set.");
+		}
+
 		return $this->presenceVerifier;
 	}
 
