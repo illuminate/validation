@@ -1,5 +1,6 @@
 <?php namespace Illuminate\Validation;
 
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Validator {
@@ -162,6 +163,10 @@ class Validator {
 		{
 			return $this->data[$attribute];
 		}
+		elseif (array_key_exists($attribute, $this->files))
+		{
+			return $this->files[$attribute];
+		}
 	}
 
 	/**
@@ -222,9 +227,9 @@ class Validator {
 		{
 			return false;
 		}
-		elseif ( ! is_null($this->files) and isset($this->files[$attribute]))
+		elseif ($value instanceof File)
 		{
-			return $this->files[$attribute]->getPath() !== '';
+			return $value->getPath() !== '';
 		}
 
 		return true;
@@ -381,9 +386,9 @@ class Validator {
 		{
 			return $this->attributes[$attribute];
 		}
-		elseif (array_key_exists($attribute, $this->files))
+		elseif ($value instanceof File)
 		{
-			return $value['size'] / 1024;
+			return $value->getSize() / 1024;
 		}
 		else
 		{
@@ -518,6 +523,171 @@ class Validator {
 		// our parameters matches the number of parameter values we can know
 		// that all of the values given actually exist in the data store.
 		return $actualCount >= $expectedCount;
+	}
+
+	/**
+	 * Validate that an attribute is a valid IP.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateIp($attribute, $value)
+	{
+		return filter_var($value, FILTER_VALIDATE_IP) !== false;
+	}
+
+	/**
+	 * Validate that an attribute is a valid e-mail address.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateEmail($attribute, $value)
+	{
+		return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+	}
+
+	/**
+	 * Validate that an attribute is a valid URL.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateUrl($attribute, $value)
+	{
+		return filter_var($value, FILTER_VALIDATE_URL) !== false;
+	}
+
+	/**
+	 * Validate that an attribute is an active URL.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateActiveUrl($attribute, $value)
+	{
+		$url = str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($value));
+
+		return checkdnsrr($url);
+	}
+
+	/**
+	 * Validate the MIME type of a file is an image MIME type.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateImage($attribute, $value)
+	{
+		return $this->validateMimes($attribute, $value, array('jpg', 'png', 'gif', 'bmp'));
+	}
+
+	/**
+	 * Validate the MIME type of a file upload attribute is in a set of MIME types.
+	 *
+	 * @param  string  $attribute
+	 * @param  array   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateMimes($attribute, $value, $parameters)
+	{
+		if ( ! $value instanceof File or $value->getPath() == '')
+		{
+			return true;
+		}
+
+		// The Symfony File class should do a decent job of guessing the MIME type
+		// so we'll just compare the given MIME types to the MIME type of the
+		// actual file to see if any of them are the actual content type.
+		foreach ($parameters as $mime)
+		{
+			if ($value->getMimeType() == $mime)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Validate that an attribute contains only alphabetic characters.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateAlpha($attribute, $value)
+	{
+		return preg_match('/^([a-z])+$/i', $value);
+	}
+
+	/**
+	 * Validate that an attribute contains only alpha-numeric characters.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateAlphaNum($attribute, $value)
+	{
+		return preg_match('/^([a-z0-9])+$/i', $value);
+	}
+
+	/**
+	 * Validate that an attribute contains only alpha-numeric characters, dashes, and underscores.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateAlphaDash($attribute, $value)
+	{
+		return preg_match('/^([-a-z0-9_-])+$/i', $value);
+	}
+
+	/**
+	 * Validate that an attribute passes a regular expression check.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateRegex($attribute, $value, $parameters)
+	{
+		return preg_match($parameters[0], $value);
+	}
+
+	/**
+	 * Validate the date is before a given date.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateBefore($attribute, $value, $parameters)
+	{
+		return (strtotime($value) < strtotime($parameters[0]));
+	}
+
+	/**
+	 * Validate the date is after a given date.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  array   $parameters
+	 * @return bool
+	 */
+	protected function validateAfter($attribute, $value, $parameters)
+	{
+		return (strtotime($value) > strtotime($parameters[0]));
 	}
 
 	/**
