@@ -584,7 +584,7 @@ class Validator {
 	 */
 	protected function validateImage($attribute, $value)
 	{
-		return $this->validateMimes($attribute, $value, array('jpg', 'png', 'gif', 'bmp'));
+		return $this->validateMimes($attribute, $value, array('jpeg', 'png', 'gif', 'bmp'));
 	}
 
 	/**

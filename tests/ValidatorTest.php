@@ -2,6 +2,7 @@
 
 use Mockery as m;
 use Illuminate\Validation\Validator;
+use Symfony\Component\HttpFoundation\Request;
 
 class ValidatorTest extends PHPUnit_Framework_TestCase {
 
