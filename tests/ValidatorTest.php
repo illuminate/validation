@@ -26,6 +26,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$trans->addResource('array', array('validation.required' => 'required!'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
+		$this->assertEquals('required!', $v->errors->first('name'));
 	}
 
 
