@@ -7,7 +7,7 @@ class MessageBag {
 	 *
 	 * @var array
 	 */
-	protected $messages;
+	protected $messages = array();
 
 	/**
 	 * Default format for message output.

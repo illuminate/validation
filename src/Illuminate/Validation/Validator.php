@@ -71,8 +71,24 @@ class Validator {
 	public function __construct(TranslatorInterface $translator, array $data, array $rules)
 	{
 		$this->data = $data;
-		$this->rules = $rules;
 		$this->translator = $translator;
+		$this->rules = $this->explodeRules($rules);
+	}
+
+	/**
+	 * Explode the rules into an array of rules.
+	 *
+	 * @param  string|array  $rules
+	 * @return array
+	 */
+	protected function explodeRules($rules)
+	{
+		foreach ($rules as $key => &$rule)
+		{
+			$rule = (is_string($rule)) ? explode('|', $rule) : $rule;
+		}
+
+		return $rules;		
 	}
 
 	/**
@@ -87,9 +103,9 @@ class Validator {
 		// We'll spin through each rule, validating the attributes attached to
 		// that rule. Any error messages will be added to the container with
 		// all of the other error messages, and return true if we get them.
-		foreach ($this->rules as $attribute => $rule)
+		foreach ($this->rules as $attribute => $rules)
 		{
-			foreach ($this->rules as $rule)
+			foreach ($rules as $rule)
 			{
 				$this->validate($attribute, $rule);
 			}
@@ -122,7 +138,7 @@ class Validator {
 		// We will get the value for the given attribute from the array of data and then
 		// verify that the attribute is indeed validatable. Unless the rule implies
 		// that the attribute is required, rules are not run for missing values.
-		$value = $this->getValue($this->data, $attribute);
+		$value = $this->getValue($attribute);
 
 		$validatable = $this->isValidatable($rule, $attribute, $value);
 
