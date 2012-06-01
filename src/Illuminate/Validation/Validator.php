@@ -367,9 +367,9 @@ class Validator {
 	 */
 	protected function getAttribute($attribute)
 	{
-		// We allow for the developer to specify language lines for each of
-		// the attributes, allowing for more displayable counterparts of
-		// each of the attributes allowing for convenient formatting.
+		// We allow for the developer to specify language lines for each of the
+		// attributes allowing for more displayable counterparts of each of
+		// the attributes. This provides the ability for simple formats.
 		$key = "validation.attributes.{$attribute}";
 
 		if (($line = $this->translator->trans($key)) !== $key)
@@ -377,9 +377,9 @@ class Validator {
 			return $line;
 		}
 
-		// If no language line has been specified for the attribute all of
-		// the underscores are removed from the attribute name and that
-		// will be used as default versions of the displayable name.
+		// If no language line has been specified for the attribute all of the
+		// underscores are removed from the attribute name and that will be
+		// used as default versions of the attribute's displayable name.
 		else
 		{
 			return str_replace('_', ' ', $attribute);
