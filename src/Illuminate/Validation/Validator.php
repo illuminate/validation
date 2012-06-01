@@ -360,6 +360,33 @@ class Validator {
 	}
 
 	/**
+	 * Get the displayable name of the attribute.
+	 *
+	 * @param  string  $attribute
+	 * @return string
+	 */
+	protected function getAttribute($attribute)
+	{
+		// We allow for the developer to specify language lines for each of
+		// the attributes, allowing for more displayable counterparts of
+		// each of the attributes allowing for convenient formatting.
+		$key = "validation.attributes.{$attribute}";
+
+		if (($line = $this->translator->trans($key)) !== $key)
+		{
+			return $line;
+		}
+
+		// If no language line has been specified for the attribute all of
+		// the underscores are removed from the attribute name and that
+		// will be used as default versions of the displayable name.
+		else
+		{
+			return str_replace('_', ' ', $attribute);
+		}
+	}
+
+	/**
 	 * Replace all place-holders for the between rule.
 	 *
 	 * @param  string  $message
