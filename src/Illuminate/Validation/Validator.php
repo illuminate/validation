@@ -602,12 +602,12 @@ class Validator {
 			return true;
 		}
 
-		// The Symfony File class should do a decent job of guessing the MIME type
-		// so we'll just compare the given MIME types to the MIME type of the
-		// actual file to see if any of them are the actual content type.
-		foreach ($parameters as $mime)
+		// The Symfony File class should do a decent job of guessing the extension
+		// based on the true MIME type so we'll just loop through the array of
+		// extensions and compare it to the guessed extension of the files.
+		foreach ($parameters as $extension)
 		{
-			if ($value->getMimeType() == $mime)
+			if ($value->guessExtension() == $extension)
 			{
 				return true;
 			}
