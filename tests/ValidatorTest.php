@@ -30,6 +30,16 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testAttributeNamesAreReplaced()
+	{
+		$trans = $this->getRealTranslator();
+		$trans->addResource('array', array('validation.required' => ':attribute is required!'), 'en', 'messages');
+		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
+		$this->assertFalse($v->passes());
+		$this->assertEquals('name is required!', $v->errors->first('name'));
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
