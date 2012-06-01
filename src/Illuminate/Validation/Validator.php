@@ -268,7 +268,7 @@ class Validator {
 	{
 		$lowerRule = strtolower($rule);
 
-		$customKey = "validation.custom.{$attribute}.{$lowerRule}";
+		$customKey = "validation.{$attribute}.{$lowerRule}";
 
 		$customMessage = $this->translator->trans($customKey);
 
