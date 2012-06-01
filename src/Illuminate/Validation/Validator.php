@@ -316,6 +316,203 @@ class Validator {
 	}
 
 	/**
+	 * Replace all error message place-holders with actual values.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function doReplacements($message, $attribute, $rule, $parameters)
+	{
+		$message = str_replace(':attribute', $this->getAttribute($attribute), $message);
+
+		if (method_exists($this, $replacer = "replace{$rule}"))
+		{
+			$message = $this->$replacer($message, $attribute, $rule, $parameters);
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Replace all place-holders for the between rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceBetween($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(array(':min', ':max'), $parameters, $message);
+	}
+
+	/**
+	 * Replace all place-holders for the size rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceSize($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':size', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the min rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceMin($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':min', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the max rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceMax($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':max', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the in rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceIn($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':values', implode(', ', $parameters), $message);
+	}
+
+	/**
+	 * Replace all place-holders for the not_in rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceNotIn($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':values', implode(', ', $parameters), $message);
+	}
+
+	/**
+	 * Replace all place-holders for the not_in rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceMimes($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':values', implode(', ', $parameters), $message);
+	}
+
+	/**
+	 * Replace all place-holders for the same rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceSame($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':other', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the different rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceDifferent($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':other', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the before rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceBefore($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':date', $parameters[0], $message);
+	}
+
+	/**
+	 * Replace all place-holders for the after rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceAfter($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':date', $parameters[0], $message);
+	}
+
+	/**
+	 * Determine if the given attribute has a rule in the given set.
+	 *
+	 * @param  string  $attribute
+	 * @param  array   $rules
+	 * @return bool
+	 */
+	protected function hasRule($attribute, $rules)
+	{
+		// To determine if the attribute has a rule in the ruleset, we will spin
+		// through each of the rules assigned to the attribute and parse them
+		// all, then check to see if the parsed rule exists in the array.
+		foreach ($this->rules[$attribute] as $rule)
+		{
+			list($rule, $parameters) = $this->parseRule($rule);
+
+			if (in_array($rule, $rules)) return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Extract the rule name and parameters from a rule.
 	 *
 	 * @param  string  $rule
