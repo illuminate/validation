@@ -44,4 +44,37 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('bar', $container->first('foo'));
 	}
 
+
+	public function testHasIndicatesExistence()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$this->assertTrue($container->has('foo'));
+		$this->assertFalse($container->has('bar'));
+	}
+
+
+	public function testAllReturnsAllMessages()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$container->add('boom', 'baz');
+		$this->assertEquals(array('bar', 'baz'), $container->all());
+	}
+
+
+	public function testFormatIsRespected()
+	{
+		$container = new MessageBag;
+		$container->setFormat('<p>:message</p>');
+		$container->add('foo', 'bar');
+		$container->add('boom', 'baz');
+		$this->assertEquals('<p>bar</p>', $container->first('foo'));
+		$this->assertEquals(array('<p>bar</p>'), $container->get('foo'));
+		$this->assertEquals(array('<p>bar</p>', '<p>baz</p>'), $container->all());
+		$this->assertEquals('bar', $container->first('foo', ':message'));
+		$this->assertEquals(array('bar'), $container->get('foo', ':message'));
+		$this->assertEquals(array('bar', 'baz'), $container->all(':message'));
+	}
+
 }
