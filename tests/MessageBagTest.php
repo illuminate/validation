@@ -1,0 +1,47 @@
+<?php
+
+use Illuminate\Validation\MessageBag;
+
+class MessageBagTest extends PHPUnit_Framework_TestCase {
+
+	public function testUniqueness()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$container->add('foo', 'bar');
+		$messages = $container->getMessages();
+		$this->assertEquals(array('bar'), $messages['foo']);
+	}
+
+
+	public function testMessagesAreAdded()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$container->add('foo', 'baz');
+		$container->add('boom', 'bust');
+		$messages = $container->getMessages();
+		$this->assertEquals(array('bar', 'baz'), $messages['foo']);
+		$this->assertEquals(array('bust'), $messages['boom']);
+	}
+
+
+	public function testGetReturnsArrayOfMessagesByKey()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$container->add('foo', 'baz');
+		$this->assertEquals(array('bar', 'baz'), $container->get('foo'));
+	}
+
+
+	public function testFirstReturnsSingleMessage()
+	{
+		$container = new MessageBag;
+		$container->add('foo', 'bar');
+		$container->add('foo', 'baz');
+		$messages = $container->getMessages();
+		$this->assertEquals('bar', $container->first('foo'));
+	}
+
+}

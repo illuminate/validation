@@ -19,6 +19,13 @@ class Validator {
 	protected $presenceVerifier;
 
 	/**
+	 * The message bag instance.
+	 *
+	 * @var Illuminate\Validation\MessageBag
+	 */
+	protected $messages;
+
+	/**
 	 * The data under validation.
 	 *
 	 * @var array
@@ -75,7 +82,7 @@ class Validator {
 	 */
 	public function passes()
 	{
-		$this->errors = new MessageContainer;
+		$this->errors = new MessageBag;
 
 		// We'll spin through each rule, validating the attributes attached to
 		// that rule. Any error messages will be added to the container with

@@ -1,6 +1,6 @@
 <?php namespace Illuminate\Validation;
 
-class MessageContainer {
+class MessageBag {
 
 	/**
 	 * All of the registered messages.
@@ -17,20 +17,7 @@ class MessageContainer {
 	protected $format = ':message';
 
 	/**
-	 * Create a new message container instance.
-	 *
-	 * @param  array   $messages
-	 * @param  string  $format
-	 * @return void
-	 */
-	public function __construct(array $messages = array(), $format = ':message')
-	{
-		$this->format = $format;
-		$this->messages = $messages;
-	}
-
-	/**
-	 * Add a message to the container.
+	 * Add a message to the bag.
 	 *
 	 * @param  string  $key
 	 * @param  string  $message
@@ -53,7 +40,7 @@ class MessageContainer {
 	 */
 	protected function isUnique($key, $message)
 	{
-		$messages = $this->messages;
+		$messages = (array) $this->messages;
 
 		return ! isset($messages[$key]) or ! in_array($message, $messages[$key]);
 	}
@@ -70,7 +57,7 @@ class MessageContainer {
 	}
 
 	/**
-	 * Get the first message from the container for a given key.
+	 * Get the first message from the bag for a given key.
 	 *
 	 * @param  string  $key
 	 * @param  string  $format
@@ -78,15 +65,13 @@ class MessageContainer {
 	 */
 	public function first($key = null, $format = null)
 	{
-		$format = $this->checkFormat($format);
-
-		$messages = is_null($key) ? $this->all($format) : $this->get($key, $format);
+		$messages = $this->get($key, $format);
 
 		return (count($messages) > 0) ? $messages[0] : '';
 	}
 
 	/**
-	 * Get all of the messages from the container for a given key.
+	 * Get all of the messages from the bag for a given key.
 	 *
 	 * @param  string  $key
 	 * @param  string  $format
@@ -108,7 +93,7 @@ class MessageContainer {
 	}
 
 	/**
-	 * Get all of the messages for every key in the container.
+	 * Get all of the messages for every key in the bag.
 	 *
 	 * @param  string  $format
 	 * @return array
