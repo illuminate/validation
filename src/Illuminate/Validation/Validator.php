@@ -680,7 +680,7 @@ class Validator {
 	 */
 	protected function validateBefore($attribute, $value, $parameters)
 	{
-		return (strtotime($value) < strtotime($parameters[0]));
+		return strtotime($value) < strtotime($parameters[0]);
 	}
 
 	/**
@@ -693,7 +693,7 @@ class Validator {
 	 */
 	protected function validateAfter($attribute, $value, $parameters)
 	{
-		return (strtotime($value) > strtotime($parameters[0]));
+		return strtotime($value) > strtotime($parameters[0]);
 	}
 
 	/**

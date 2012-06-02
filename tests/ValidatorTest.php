@@ -431,6 +431,9 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	/**
+	 * Also covers the "Mimes" validation rule.
+	 */
 	public function testValidateImage()
 	{
 		$trans = $this->getRealTranslator();
@@ -459,6 +462,62 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$file5 = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
 		$file5->expects($this->any())->method('guessExtension')->will($this->returnValue('png'));
 		$v->setFiles(array('x' => $file5));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateAlpha()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'aslsdlks'), array('x' => 'Alpha'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('x' => 'http://google.com'), array('x' => 'Alpha'));
+		$this->assertFalse($v->passes());
+	}
+
+
+	public function testValidateAlphaNum()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'asls13dlks'), array('x' => 'AlphaNum'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('x' => 'http://g232oogle.com'), array('x' => 'AlphaNum'));
+		$this->assertFalse($v->passes());
+	}
+
+
+	public function testValidateAlphaDash()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'asls1-_3dlks'), array('x' => 'AlphaDash'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('x' => 'http://-g232oogle.com'), array('x' => 'AlphaDash'));
+		$this->assertFalse($v->passes());
+	}
+
+
+	public function testValidateRegex()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'asdasdf'), array('x' => 'Regex:/^([a-z])+$/i'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('x' => 'aasd234fsd1'), array('x' => 'Regex:/^([a-z])+$/i'));
+		$this->assertFalse($v->passes());	
+	}
+
+
+	public function testBeforeAndAfter()
+	{
+		date_default_timezone_set('UTC');
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => '2000-01-01'), array('x' => 'Before:2012-01-01'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('x' => '2012-01-01'), array('x' => 'After:2000-01-01'));
 		$this->assertTrue($v->passes());
 	}
 
