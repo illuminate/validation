@@ -470,6 +470,10 @@ class Validator {
 
 			$excludeId = $parameters[2];
 		}
+		else
+		{
+			list($idColumn, $excludeId) = array(null, null);
+		}
 
 		// Finally we get an instance of the presence verifier implementation and
 		// verify that the value is in fact unique for the given column on the
