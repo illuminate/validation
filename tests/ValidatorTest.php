@@ -240,6 +240,35 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateMin()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => '3'), array('foo' => 'Min:3'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'anc'), array('foo' => 'Min:3'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '2'), array('foo' => 'Numeric|Min:3'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '5'), array('foo' => 'Numeric|Min:3'));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(3072));
+		$v = new Validator($trans, array(), array('photo' => 'Min:2'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(4072));
+		$v = new Validator($trans, array(), array('photo' => 'Min:10'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertFalse($v->passes());		
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
