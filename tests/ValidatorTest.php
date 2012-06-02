@@ -142,6 +142,104 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateNumeric()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'asdad'), array('foo' => 'Numeric'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '1.23'), array('foo' => 'Numeric'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '-1'), array('foo' => 'Numeric'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '1'), array('foo' => 'Numeric'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateInteger()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'asdad'), array('foo' => 'Integer'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '1.23'), array('foo' => 'Integer'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '-1'), array('foo' => 'Integer'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '1'), array('foo' => 'Integer'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateSize()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'asdad'), array('foo' => 'Size:3'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'anc'), array('foo' => 'Size:3'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '123'), array('foo' => 'Numeric|Size:3'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '3'), array('foo' => 'Numeric|Size:3'));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(3072));
+		$v = new Validator($trans, array(), array('photo' => 'Size:3'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(4072));
+		$v = new Validator($trans, array(), array('photo' => 'Size:3'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertFalse($v->passes());		
+	}
+
+
+	public function testValidateBetween()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'asdad'), array('foo' => 'Between:3,4'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'anc'), array('foo' => 'Between:3,5'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'ancf'), array('foo' => 'Between:3,5'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'ancfs'), array('foo' => 'Between:3,5'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '123'), array('foo' => 'Numeric|Between:50,100'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '3'), array('foo' => 'Numeric|Between:1,5'));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(3072));
+		$v = new Validator($trans, array(), array('photo' => 'Between:1,5'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(4072));
+		$v = new Validator($trans, array(), array('photo' => 'Between:1,2'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertFalse($v->passes());		
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
