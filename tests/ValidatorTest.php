@@ -319,6 +319,28 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateIn()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('name' => 'foo'), array('name' => 'In:bar,baz'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('name' => 'foo'), array('name' => 'In:foo,baz'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateNotIn()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('name' => 'foo'), array('name' => 'NotIn:bar,baz'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('name' => 'foo'), array('name' => 'NotIn:foo,baz'));
+		$this->assertFalse($v->passes());
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
