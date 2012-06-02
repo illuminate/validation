@@ -387,6 +387,82 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateIp()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('ip' => 'aslsdlks'), array('ip' => 'Ip'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('ip' => '127.0.0.1'), array('ip' => 'Ip'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateEmail()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'aslsdlks'), array('x' => 'Email'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('x' => 'foo@gmail.com'), array('x' => 'Email'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateUrl()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'aslsdlks'), array('x' => 'Url'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('x' => 'http://google.com'), array('x' => 'Url'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateActiveUrl()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => 'aslsdlks'), array('x' => 'ActiveUrl'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('x' => 'http://google.com'), array('x' => 'ActiveUrl'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateImage()
+	{
+		$trans = $this->getRealTranslator();
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
+		$file->expects($this->any())->method('guessExtension')->will($this->returnValue('php'));
+		$v = new Validator($trans, array(), array('x' => 'Image'));
+		$v->setFiles(array('x' => $file));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array(), array('x' => 'Image'));
+		$file2 = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
+		$file2->expects($this->any())->method('guessExtension')->will($this->returnValue('jpeg'));
+		$v->setFiles(array('x' => $file2));
+		$this->assertTrue($v->passes());
+
+		$file3 = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
+		$file3->expects($this->any())->method('guessExtension')->will($this->returnValue('gif'));
+		$v->setFiles(array('x' => $file3));
+		$this->assertTrue($v->passes());
+
+		$file4 = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
+		$file4->expects($this->any())->method('guessExtension')->will($this->returnValue('bmp'));
+		$v->setFiles(array('x' => $file4));
+		$this->assertTrue($v->passes());
+
+		$file5 = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('guessExtension'), array(__FILE__, false));
+		$file5->expects($this->any())->method('guessExtension')->will($this->returnValue('png'));
+		$v->setFiles(array('x' => $file5));
+		$this->assertTrue($v->passes());
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
