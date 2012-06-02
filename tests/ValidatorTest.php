@@ -364,6 +364,29 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidationExists()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('email' => 'foo'), array('email' => 'Exists:users'));
+		$mock = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+		$mock->shouldReceive('getCount')->once()->with('users', 'email', 'foo')->andReturn(true);
+		$v->setPresenceVerifier($mock);
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('email' => 'foo'), array('email' => 'Exists:users,email_addr'));
+		$mock2 = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+		$mock2->shouldReceive('getCount')->once()->with('users', 'email_addr', 'foo')->andReturn(false);
+		$v->setPresenceVerifier($mock2);
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('email' => array('foo')), array('email' => 'Exists:users,email_addr'));
+		$mock3 = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+		$mock3->shouldReceive('getMultiCount')->once()->with('users', 'email_addr', array('foo'))->andReturn(false);
+		$v->setPresenceVerifier($mock3);
+		$this->assertFalse($v->passes());
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
