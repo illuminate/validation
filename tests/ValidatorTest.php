@@ -94,6 +94,54 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateSame()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'bar', 'baz' => 'boom'), array('foo' => 'Same:baz'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'bar'), array('foo' => 'Same:baz'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'bar', 'baz' => 'bar'), array('foo' => 'Same:baz'));
+		$this->assertTrue($v->passes());
+	}
+
+
+	public function testValidateDifferent()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'bar', 'baz' => 'boom'), array('foo' => 'Different:baz'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'bar'), array('foo' => 'Different:baz'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'bar', 'baz' => 'bar'), array('foo' => 'Different:baz'));
+		$this->assertFalse($v->passes());
+	}
+
+
+	public function testValidateAccepted()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'no'), array('foo' => 'Accepted'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => null), array('foo' => 'Accepted'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array(), array('foo' => 'Accepted'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'yes'), array('foo' => 'Accepted'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '1'), array('foo' => 'Accepted'));
+		$this->assertTrue($v->passes());
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');

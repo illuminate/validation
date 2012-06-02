@@ -274,7 +274,7 @@ class Validator {
 	{
 		$other = $parameters[0];
 
-		return isset($this->attributes[$other]) and $value != $this->attributes[$other];
+		return isset($this->data[$other]) and $value != $this->data[$other];
 	}
 
 	/**
@@ -384,7 +384,7 @@ class Validator {
 	 	// entire length of the string will be considered the attribute size.
 		if (is_numeric($value) and $this->hasRule($attribute, $this->numericRules))
 		{
-			return $this->attributes[$attribute];
+			return $this->data[$attribute];
 		}
 		elseif ($value instanceof File)
 		{
