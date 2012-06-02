@@ -480,7 +480,9 @@ class Validator {
 		// data store being checked by the presence verifier implementation.
 		$verifier = $this->getPresenceVerifier();
 
-		return $verifier->verifyUnique($table, $column, $excludeId, $idColumn);
+		$count = $verifier->getCount($table, $column, $value, $excludeId, $idColumn);
+
+		return $count == 0;
 	}
 
 	/**
