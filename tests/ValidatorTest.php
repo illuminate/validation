@@ -269,6 +269,35 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testValidateMax()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('foo' => 'aslksd'), array('foo' => 'Max:3'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => 'anc'), array('foo' => 'Max:3'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('foo' => '211'), array('foo' => 'Numeric|Max:100'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('foo' => '22'), array('foo' => 'Numeric|Max:33'));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(3072));
+		$v = new Validator($trans, array(), array('photo' => 'Max:10'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertTrue($v->passes());
+
+		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
+		$file->expects($this->any())->method('getSize')->will($this->returnValue(4072));
+		$v = new Validator($trans, array(), array('photo' => 'Max:2'));
+		$v->setFiles(array('photo' => $file));
+		$this->assertFalse($v->passes());		
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');
