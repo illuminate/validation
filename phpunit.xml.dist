@@ -11,7 +11,7 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="Illuminate Container Test Suite">
+        <testsuite name="Illuminate Validation Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
