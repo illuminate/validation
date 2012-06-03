@@ -1,5 +1,6 @@
 <?php namespace Illuminate\Validation;
 
+use Closure;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -46,6 +47,13 @@ class Validator {
 	 * @var array
 	 */
 	protected $rules;
+
+	/**
+	 * All of the custom validator extensions.
+	 *
+	 * @var array
+	 */
+	protected $extensions = array();
 
 	/**
 	 * The size related validation rules.
@@ -1011,7 +1019,7 @@ class Validator {
 	{
 		$parameters = array();
 
-		// The format for specifying validation rules and parameters follows an
+	// The format for specifying validation rules and parameters follows an
 		// easy {rule}:{parameters} formatting convention. For instance the
 		// rule "Max:3" states that the value may only be three letters.
 		if (($colon = strpos($rule, ':')) !== false)
@@ -1022,6 +1030,39 @@ class Validator {
 		$rule = is_numeric($colon) ? substr($rule, 0, $colon) : $rule;
 
 		return array($rule, $parameters);
+	}
+
+	/**
+	 * Get the array of custom validator extensions.
+	 *
+	 * @return array
+	 */
+	public function getExtensions()
+	{
+		return $this->extensions;
+	}
+
+	/**
+	 * Register an array of custom validator extensions.
+	 *
+	 * @param  array  $extensions
+	 * @return void
+	 */
+	public function addExtensions(array $extensions)
+	{
+		$this->extensions = array_merge($this->extensions, $extensions);
+	}
+
+	/**
+	 * Register a custom validator extension.
+	 *
+	 * @param  string   $rule
+	 * @param  Closure  $extension
+	 * @return void
+	 */
+	public function addExtension($rule, Closure $extension)
+	{
+		$this->extensions[$rule] = $extension;
 	}
 
 	/**
@@ -1110,6 +1151,25 @@ class Validator {
 	public function setTranslator(TranslatorInterface $translator)
 	{
 		$this->translator = $translator;
+	}
+
+	/**
+	 * Handle dynamic calls to class methods.
+	 *
+	 * @param  string  $method
+	 * @param  array   $parameters
+	 * @return mixed
+	 */
+	public function __call($method, $parameters)
+	{
+		$rule = substr($method, 8);
+
+		if (isset($this->extensions[$rule]))
+		{
+			return call_user_func_array($this->extensions[$rule], $parameters);
+		}
+
+		throw new \BadMethodCallException("Method [$method] does not exist.");
 	}
 
 }

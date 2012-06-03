@@ -522,6 +522,17 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testCustomValidators()
+	{
+		$trans = $this->getRealTranslator();
+		$trans->addResource('array', array('validation.foo' => 'foo!'), 'en', 'messages');
+		$v = new Validator($trans, array('name' => 'taylor'), array('name' => 'Foo'));
+		$v->addExtension('Foo', function() { return false; });
+		$this->assertFalse($v->passes());
+		$this->assertEquals('foo!', $v->errors->first('name'));
+	}
+
+
 	protected function getTranslator()
 	{
 		return m::mock('Symfony\Component\Translation\TranslatorInterface');

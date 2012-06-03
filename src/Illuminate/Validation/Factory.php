@@ -1,5 +1,6 @@
 <?php namespace Illuminate\Validation;
 
+use Closure;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Factory {
@@ -17,6 +18,13 @@ class Factory {
 	 * @var Illuminate\Validation\PresenceVerifierInterface
 	 */
 	protected $presenceVerifier;
+
+	/**
+	 * All of the custom validator extensions.
+	 *
+	 * @var array
+	 */
+	protected $extensions = array();
 
 	/**
 	 * Create a new Validator factory instance.
@@ -45,7 +53,21 @@ class Factory {
 			$validator->setPresenceVerifier($this->presenceVerifier);
 		}
 
+		$validator->addExtensions($this->extensions);
+
 		return $validator;
+	}
+
+	/**
+	 * Register a custom validator extension.
+	 *
+	 * @param  string  $rule
+	 * @param  Closure  $extension
+	 * @return void
+	 */
+	public function addExtension($rule, Closure $extension)
+	{
+		$this->extensions[$rule] = $extension;
 	}
 
 	/**
