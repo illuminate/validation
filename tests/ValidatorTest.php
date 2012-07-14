@@ -28,7 +28,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$trans->addResource('array', array('validation.required' => 'required!'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('required!', $v->errors->first('name'));
+		$this->assertEquals('required!', $v->getMessages()->first('name'));
 	}
 
 
@@ -38,13 +38,13 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$trans->addResource('array', array('validation.required' => ':attribute is required!'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('name is required!', $v->errors->first('name'));
+		$this->assertEquals('name is required!', $v->getMessages()->first('name'));
 
 		$trans = $this->getRealTranslator();
 		$trans->addResource('array', array('validation.required' => ':attribute is required!', 'validation.attributes.name' => 'Name'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('Name is required!', $v->errors->first('name'));
+		$this->assertEquals('Name is required!', $v->getMessages()->first('name'));
 	}
 
 
@@ -54,7 +54,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$trans->addResource('array', array('validation.required' => 'required!', 'validation.name.required' => 'really required!'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('really required!', $v->errors->first('name'));
+		$this->assertEquals('really required!', $v->getMessages()->first('name'));
 	}
 
 
@@ -304,18 +304,18 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$trans->addResource('array', array('validation.min.numeric' => 'numeric', 'validation.size.string' => 'string', 'validation.max.file' => 'file'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => '3'), array('name' => 'Numeric|Min:5'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('numeric', $v->errors->first('name'));
+		$this->assertEquals('numeric', $v->getMessages()->first('name'));
 
 		$v = new Validator($trans, array('name' => 'asasdfadsfd'), array('name' => 'Size:2'));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('string', $v->errors->first('name'));
+		$this->assertEquals('string', $v->getMessages()->first('name'));
 
 		$file = $this->getMock('Symfony\Component\HttpFoundation\File\File', array('getSize'), array(__FILE__, false));
 		$file->expects($this->any())->method('getSize')->will($this->returnValue(4072));
 		$v = new Validator($trans, array(), array('photo' => 'Max:3'));
 		$v->setFiles(array('photo' => $file));
 		$this->assertFalse($v->passes());
-		$this->assertEquals('file', $v->errors->first('photo'));
+		$this->assertEquals('file', $v->getMessages()->first('photo'));
 	}
 
 
@@ -529,7 +529,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$v = new Validator($trans, array('name' => 'taylor'), array('name' => 'Foo'));
 		$v->addExtension('Foo', function() { return false; });
 		$this->assertFalse($v->passes());
-		$this->assertEquals('foo!', $v->errors->first('name'));
+		$this->assertEquals('foo!', $v->getMessages()->first('name'));
 	}
 
 
