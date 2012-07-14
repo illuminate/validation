@@ -1,6 +1,6 @@
-<?php namespace Illuminate\Validation;
+<?php namespace Illuminate\Validation; use Countable;
 
-class MessageBag {
+class MessageBag implements Countable {
 
 	/**
 	 * All of the registered messages.
@@ -173,6 +173,16 @@ class MessageBag {
 	public function setFormat($format = ':message')
 	{
 		$this->format = $format;
+	}
+
+	/**
+	 * Get the number of messages in the container.
+	 *
+	 * @return int
+	 */
+	public function count()
+	{
+		return count($this->messages);
 	}
 
 }
