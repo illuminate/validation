@@ -541,7 +541,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 
 	protected function getRealTranslator()
 	{
-		$trans = new Symfony\Component\Translation\Translator('en');
+		$trans = new Symfony\Component\Translation\Translator('en', new Symfony\Component\Translation\MessageSelector);
 		$trans->addLoader('array', new Symfony\Component\Translation\Loader\ArrayLoader);
 		return $trans;
 	}
