@@ -107,7 +107,7 @@ class Validator {
 	 */
 	public function passes()
 	{
-		$this->errors = new MessageBag;
+		$this->messages = new MessageBag;
 
 		// We'll spin through each rule, validating the attributes attached to
 		// that rule. Any error messages will be added to the container with
@@ -120,7 +120,7 @@ class Validator {
 			}
 		}
 
-		return count($this->errors->all()) === 0;
+		return count($this->messages->all()) === 0;
 	}
 
 	/**
@@ -215,7 +215,7 @@ class Validator {
 
 		$message = $this->doReplacements($message, $attribute, $rule, $parameters);
 
-		$this->errors->add($attribute, $message);
+		$this->messages->add($attribute, $message);
 	}
 
 	/**
@@ -1153,6 +1153,16 @@ class Validator {
 	public function setTranslator(TranslatorInterface $translator)
 	{
 		$this->translator = $translator;
+	}
+
+	/**
+	 * Get the message container for the validator.
+	 *
+	 * @return Illuminate\Validation\MessageBag
+	 */
+	public function getMessages()
+	{
+		return $this->messages;
 	}
 
 	/**
