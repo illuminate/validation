@@ -1099,11 +1099,13 @@ class Validator {
 	 * Set the files under validation.
 	 *
 	 * @param  array  $files
-	 * @return void
+	 * @return Illuminate\Validation\Validator
 	 */
 	public function setFiles(array $files)
 	{
 		$this->files = $files;
+
+		return $this;
 	}
 
 	/**
