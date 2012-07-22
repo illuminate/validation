@@ -54,7 +54,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface {
 	 */
 	public function getMultiCount($collection, $column, array $values)
 	{
-		$query = $this->db->table($collection)->whereIn($column, $values)->count();
+		return $this->db->table($collection)->whereIn($column, $values)->count();
 	}
 
 }
