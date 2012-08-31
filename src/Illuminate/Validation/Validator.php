@@ -109,9 +109,9 @@ class Validator {
 	{
 		$this->messages = new MessageBag;
 
-		// We'll spin through each rule, validating the attributes attached to
-		// that rule. Any error messages will be added to the container with
-		// all of the other error messages, and return true if we get them.
+		// We'll spin through each rule, validating the attributes attached to that
+		// rule. Any error messages will be added to the containers with each of
+		// the other error messages and we'll return true if we have messages.
 		foreach ($this->rules as $attribute => $rules)
 		{
 			foreach ($rules as $rule)
@@ -386,11 +386,13 @@ class Validator {
 	 */
 	protected function getSize($attribute, $value)
 	{
+		$hasNumeric = $this->hasRule($attribute, $this->numericRules);
+
 	 	// This method will determine if the attribute is a number, string, or file and
 	 	// return the proper size accordingly. If it is a number, then number itself
 	 	// is the size. If it is a file, we take kilobytes, and for a string the
 	 	// entire length of the string will be considered the attribute size.
-		if (is_numeric($value) and $this->hasRule($attribute, $this->numericRules))
+		if (is_numeric($value) and $hasNumeric)
 		{
 			return $this->data[$attribute];
 		}
@@ -471,7 +473,7 @@ class Validator {
 
 		// The third parameter spot holds the ID value that will be excluded from
 		// the query when checking for uniqueness. This is useful for ignoring
-		// the current value of e-mail address fields when updating a user.
+		// the current values of e-mail address fields when updating a user.
 		if (isset($parameters[2]))
 		{
 			$idColumn = isset($parameters[3]) ? $parameters[3] : 'id';
@@ -506,8 +508,8 @@ class Validator {
 		$table = $parameters[0];
 
 		// The second parameter position holds the name of the column that should
-		// be verified as existing. If this parameter is not specified we'll
-		// assume that the column to be verified has the attribute name.
+		// be verified as existing. If this parameter is not specified we will
+		// assume that the columns to get verified has the attribute's name.
 		if (isset($parameters[1]))
 		{
 			$column = $parameters[1];
@@ -521,7 +523,7 @@ class Validator {
 
 		// If the given value is actually an array, we will tell the verifier we
 		// need to count the existence of multiple objects so it can utilize
-		// a "where in" type of statement when querying the data source.
+		// a "where in" type of statement when querying the data sources.
 		$verifier = $this->getPresenceVerifier();
 
 		if (is_array($value))
@@ -535,7 +537,7 @@ class Validator {
 
 		// Finally, if the actual count of objects matching the given values in
 		// our parameters matches the number of parameter values we can know
-		// that all of the values given actually exist in the data store.
+		// that all of the values given actually exist in the data stores.
 		return $actualCount >= $expectedCount;
 	}
 
@@ -721,7 +723,7 @@ class Validator {
 
 		// First we check for a custom defined validation message for the attribute
 		// and rule. This allows the developer to specify specific messages for
-		// only some attributes and rules that need to be specially formed.
+		// only some attributes and rules that need to get specially formed.
 		if ($customMessage !== $customKey)
 		{
 			return $customMessage;
@@ -736,8 +738,8 @@ class Validator {
 		}
 
 		// Finally, if on developer specified messages have been set, and no other
-		// special messages apply to this rule, we will just pull the default
-		// message out of the translator service for this validation rule.
+		// special messages apply for this rule, we will just pull the default
+		// messages out of the translator service for this validation rule.
 		else
 		{
 			$key = "validation.{$lowerRule}";
@@ -759,7 +761,7 @@ class Validator {
 
 		// There are three different types of size validations. The attribute may
 		// be either a number, file, or string, so we will check a few things
-		// to figure out which one it is and return the appropriate line.
+		// to figure out which one it is and return the appropriate lines.
 		if ($this->hasRule($attribute, $this->numericRules))
 		{
 			$type = 'numeric';
@@ -826,7 +828,7 @@ class Validator {
 
 		// If no language line has been specified for the attribute all of the
 		// underscores are removed from the attribute name and that will be
-		// used as default versions of the attribute's displayable name.
+		// used as default versions of the attribute's displayable names.
 		else
 		{
 			return str_replace('_', ' ', $attribute);
@@ -998,7 +1000,7 @@ class Validator {
 	{
 		// To determine if the attribute has a rule in the ruleset, we will spin
 		// through each of the rules assigned to the attribute and parse them
-		// all, then check to see if the parsed rule exists in the array.
+		// all, then check to see if the parsed rules exists in the arrays.
 		foreach ($this->rules[$attribute] as $rule)
 		{
 			list($rule, $parameters) = $this->parseRule($rule);
