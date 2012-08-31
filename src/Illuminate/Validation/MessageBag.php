@@ -82,8 +82,8 @@ class MessageBag implements Countable {
 		$format = $this->checkFormat($format);
 
 		// If the message exists in the container, we will transform it and return
-		// the message. Otherwise, we'll return an empty array since the whole
-		// method is to give back an array of messages in the first place.
+		// the message. Otherwise, we'll return an empty array since the entire
+		// methods is to return back an array of messages in the first place.
 		if (array_key_exists($key, $this->messages))
 		{
 			return $this->transform($this->messages[$key], $format);
@@ -125,7 +125,7 @@ class MessageBag implements Countable {
 
 		// We will simply spin through the given messages and transform each one
 		// replacing the :message place holder with the real message allowing
-		// the messages to be easily formatted to each developer's liking.
+		// the messages to be easily formatted to each developer's desires.
 		foreach ($messages as $key => &$message)
 		{
 			$message = str_replace(':message', $message, $format);
