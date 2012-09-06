@@ -761,32 +761,37 @@ class Validator {
 	{
 		$lowerRule = strtolower($rule);
 
-		// There are three different types of size validations. The attribute may
-		// be either a number, file, or string, so we will check a few things
-		// to figure out which one it is and return the appropriate lines.
-		if ($this->hasRule($attribute, $this->numericRules))
-		{
-			$type = 'numeric';
-		}
+		// There are three different types of size validations. The attribute may be
+		// either a number, file, or string so we will check a few things to know
+		// which type of value it is and return the correct line for that type.
+		$type = $this->getAttribtueType($attribute);
 
-		// We assume that the attributes present in the files array are files so
-		// that means that if the attribute does not have a numeric rule and
-		// is not a file, we'll just consider it a string by elimination.
-		elseif (array_key_exists($attribute, $this->files))
-		{
-			$type = 'file';
-		}
-		else
-		{
-			$type = 'string';
-		}
-
-		// Finally we can format the validation key and return the message from
-		// the translation service. The validation rule will be suffixed by
-		// the type of attribute that it applies for: number, file, etc.
 		$key = "validation.{$lowerRule}.{$type}";
 
 		return $this->translator->trans($key);
+	}
+
+	/**
+	 * Get the data type of the given attribute.
+	 *
+	 * @param  string  $attribute
+	 * @return string
+	 */
+	protected function getAttribtueType($attribute)
+	{
+		// We assume that the attributes present in the file array are files so that
+		// means that if the attribute does not have a numeric rule and the files
+		// list doesn't have it we'll just consider it a string by elimination.
+		if ($this->hasRule($attribute, $this->numericRules))
+		{
+			return 'numeric';
+		}
+		elseif (array_key_exists($attribute, $this->files))
+		{
+			return 'file';
+		}
+
+		return 'string';
 	}
 
 	/**
