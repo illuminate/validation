@@ -714,6 +714,9 @@ class Validator {
 	 */
 	protected function getMessage($attribute, $rule)
 	{
+		// First we will retrieve the custom message for the validation rule if one
+		// exists. If a custom validation message is being used we'll return the
+		// custom message, otherwise we'll keep searching for a valid message.
 		$lowerRule = strtolower($rule);
 
 		$customKey = "validation.{$attribute}.{$lowerRule}";
