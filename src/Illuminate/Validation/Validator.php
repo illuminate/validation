@@ -508,38 +508,36 @@ class Validator {
 	{
 		$table = $parameters[0];
 
-		// The second parameter position holds the name of the column that should
-		// be verified as existing. If this parameter is not specified we will
-		// assume that the columns to get verified has the attribute's name.
-		if (isset($parameters[1]))
-		{
-			$column = $parameters[1];
-		}
-		else
-		{
-			$column = $attribute;
-		}
+		// The second parameter position holds the name of the column that should be
+		// verified as existing. If this parameter is not specified we will guess
+		// that the columns being "verified" shares the given attribute's name.
+		$column = isset($parameters[1]) ? $parameters[1] : $attribute;
 
-		$expectedCount = (is_array($value)) ? count($value) : 1;
+		$expected = (is_array($value)) ? count($value) : 1;
 
-		// If the given value is actually an array, we will tell the verifier we
-		// need to count the existence of multiple objects so it can utilize
-		// a "where in" type of statement when querying the data sources.
+		return $this->getExistCount($table, $column, $value) >= $expected;
+	}
+
+	/**
+	 * Get the number of records that exist in storage.
+	 *
+	 * @param  string  $table
+	 * @param  string  $column
+	 * @param  mixed   $value
+	 * @return int
+	 */
+	protected function getExistCount($table, $column, $value)
+	{
 		$verifier = $this->getPresenceVerifier();
 
 		if (is_array($value))
 		{
-			$actualCount = $verifier->getMultiCount($table, $column, $value);
+			return $verifier->getMultiCount($table, $column, $value);
 		}
 		else
 		{
-			$actualCount = $verifier->getCount($table, $column, $value);
+			return $verifier->getCount($table, $column, $value);
 		}
-
-		// Finally, if the actual count of objects matching the given values in
-		// our parameters matches the number of parameter values we can know
-		// that all of the values given actually exist in the data stores.
-		return $actualCount >= $expectedCount;
 	}
 
 	/**
