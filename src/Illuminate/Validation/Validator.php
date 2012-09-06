@@ -459,40 +459,41 @@ class Validator {
 	{
 		$table = $parameters[0];
 
-		// The second parameter position holds the name of the column that should
-		// be verified as unique. If this parameter is not specified we will
-		// assume that the column to be verified has the attribute name.
-		if (isset($parameters[1]))
-		{
-			$column = $parameters[1];
-		}
-		else
-		{
-			$column = $attribute;
-		}
+		// The second parameter position holds the name of the column that needs to
+		// be verified as unique. If this parameter isn't specified we will just
+		// assume that this column to be verified shares the attribute's name.
+		$column = isset($parameters[1]) ? $parameters[1] : $attribute;
 
-		// The third parameter spot holds the ID value that will be excluded from
-		// the query when checking for uniqueness. This is useful for ignoring
-		// the current values of e-mail address fields when updating a user.
+		list($idColumn, $id) = array(null, null);
+
 		if (isset($parameters[2]))
 		{
-			$idColumn = isset($parameters[3]) ? $parameters[3] : 'id';
-
-			$excludeId = $parameters[2];
-		}
-		else
-		{
-			list($idColumn, $excludeId) = array(null, null);
+			list($idColumn, $id) = $this->getUniqueIds($parameters);
 		}
 
-		// Finally we get an instance of the presence verifier implementation and
-		// verify that the value is in fact unique for the given column on the
-		// data store being checked by the presence verifier implementation.
+		// The presence verifier is responsible for counting rows within this store
+		// mechanism which might be a relational database or any other permanent
+		// data store like Redis, etc. We will use it to determine uniqueness.
 		$verifier = $this->getPresenceVerifier();
 
-		$count = $verifier->getCount($table, $column, $value, $excludeId, $idColumn);
+		return $verifier->getCount(
 
-		return $count == 0;
+			$table, $column, $value, $id, $idColumn
+
+		) == 0;
+	}
+
+	/**
+	 * Get the excluded ID column and value for the unique rule.
+	 *
+	 * @param  array  $parameters
+	 * @return array
+	 */
+	protected function getUniqueIds($parameters)
+	{
+		$idColumn = isset($parameters[3]) ? $parameters[3] : 'id';
+
+		return array($idColumn, $parameters[2]);
 	}
 
 	/**
