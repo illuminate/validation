@@ -70,6 +70,13 @@ class Validator {
 	protected $numericRules = array('Numeric', 'Integer');
 
 	/**
+	 * The implicit validation rules.
+	 *
+	 * @var array
+	 */
+	protected $implicitRules = array('Required', 'RequiredWith', 'Accepted');
+
+	/**
 	 * Create a new Validator instance.
 	 *
 	 * @param  Symfony\Component\Translation\TranslatorInterface  $translator
@@ -198,7 +205,7 @@ class Validator {
 	 */
 	protected function isImplicit($rule)
 	{
-		return $rule == 'Required' or $rule == 'Accepted';
+		return in_array($rule, $this->implicitRules);
 	}
 
 	/**
@@ -241,6 +248,31 @@ class Validator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Validate that an attribute exists when another attribute exists
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @param  mixed   $parameters
+	 * @return bool
+	 */
+	protected function validateRequiredWith($attribute, $value, $parameters)
+	{
+		$other = $parameters[0];
+
+		if (! isset($this->data[$other]))
+		{
+			return true;
+		}
+
+		if (! $this->validateRequired($other, $this->data[$other]))
+		{
+			return true;
+		}
+
+		return $this->validateRequired($attribute, $value);
 	}
 
 	/**
