@@ -522,6 +522,18 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	/**
+	 * @expectedException \BadMethodCallException
+	 * @expectedExceptionMessage Method [someBadMethod] does not exist.
+	 */
+	public function testBadMethodCallThrowsException()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array(), array());
+		$v->someBadMethod();
+	}
+
+
 	public function testCustomValidators()
 	{
 		$trans = $this->getRealTranslator();
