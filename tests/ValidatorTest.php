@@ -51,7 +51,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	public function testCustomValidationLinesAreRespected()
 	{
 		$trans = $this->getRealTranslator();
-		$trans->addResource('array', array('validation.required' => 'required!', 'validation.name.required' => 'really required!'), 'en', 'messages');
+		$trans->addResource('array', array('validation.required' => 'required!', 'validation.custom.name.required' => 'really required!'), 'en', 'messages');
 		$v = new Validator($trans, array('name' => ''), array('name' => 'Required'));
 		$this->assertFalse($v->passes());
 		$this->assertEquals('really required!', $v->getMessages()->first('name'));

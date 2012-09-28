@@ -719,7 +719,7 @@ class Validator {
 		// custom message, otherwise we'll keep searching for a valid message.
 		$lowerRule = strtolower($rule);
 
-		$customKey = "validation.{$attribute}.{$lowerRule}";
+		$customKey = "validation.custom.{$attribute}.{$lowerRule}";
 
 		$customMessage = $this->translator->trans($customKey);
 
