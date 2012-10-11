@@ -27,6 +27,13 @@ class Factory {
 	protected $extensions = array();
 
 	/**
+	 * The Validator resolver instance.
+	 *
+	 * @var Closure
+	 */
+	protected $resolver;
+
+	/**
 	 * Create a new Validator factory instance.
 	 *
 	 * @param  Symfony\Component\Translation\TranslatorInterface  $translator
@@ -46,7 +53,7 @@ class Factory {
 	 */
 	public function make(array $data, array $rules)
 	{
-		$validator = new Validator($this->translator, $data, $rules);
+		$validator = $this->resolve($data, $rules);
 
 		if ( ! is_null($this->presenceVerifier))
 		{
@@ -59,15 +66,45 @@ class Factory {
 	}
 
 	/**
+	 * Resolve a new Validator instance.
+	 *
+	 * @param  array  $data
+	 * @param  array  $rules
+	 * @return Illuminate\Validation\Validator
+	 */
+	protected function resolve($data, $rules)
+	{
+		if (is_null($this->resolver))
+		{
+			return new Validator($this->translator, $data, $rules);
+		}
+		else
+		{
+			return call_user_func($this->resolver, $this->translator, $data, $rules);
+		}
+	}
+
+	/**
 	 * Register a custom validator extension.
 	 *
 	 * @param  string  $rule
 	 * @param  Closure  $extension
 	 * @return void
 	 */
-	public function addExtension($rule, Closure $extension)
+	public function extend($rule, Closure $extension)
 	{
 		$this->extensions[$rule] = $extension;
+	}
+
+	/**
+	 * Set the Validator instance resolver.
+	 *
+	 * @param  Closure  $resolver
+	 * @return void
+	 */
+	public function resolver(Closure $resolver)
+	{
+		$this->resolver = $resolver;
 	}
 
 	/**
