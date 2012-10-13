@@ -296,7 +296,7 @@ class Validator {
 	 */
 	protected function validateAccepted($attribute, $value)
 	{
-		return $this->validateRequired($attribute, $value) and ($value == 'yes' or $value == '1');
+		return $this->validateRequired($attribute, $value) and ($value == 'yes' or $value == 'on' or $value == '1');
 	}
 
 	/**
