@@ -1,23 +1,30 @@
 <?php namespace Illuminate\Validation;
 
-use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionResolverInterface;
 
 class DatabasePresenceVerifier implements PresenceVerifierInterface {
 
 	/**
 	 * The database connection instance.
 	 *
-	 * @var  Illuminate\Database\Connection
+	 * @var  Illuminate\Database\ConnectionResolverInterface
 	 */
 	protected $db;
 
 	/**
+	 * The database connection to use.
+	 *
+	 * @var string
+	 */
+	protected $connection = null;
+
+	/**
 	 * Create a new database presence verifier.
 	 *
-	 * @param  Illuminate\Database\Connection  $db
+	 * @param  Illuminate\Database\ConnectionResolverInterface  $db
 	 * @return void
 	 */
-	public function __construct(Connection $db)
+	public function __construct(ConnectionResolverInterface $db)
 	{
 		$this->db = $db;
 	}
@@ -34,7 +41,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface {
 	 */
 	public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null)
 	{
-		$query = $this->db->table($collection)->where($column, '=', $value);
+		$query = $this->table($collection)->where($column, '=', $value);
 
 		if ( ! is_null($excludeId))
 		{
@@ -54,7 +61,29 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface {
 	 */
 	public function getMultiCount($collection, $column, array $values)
 	{
-		return $this->db->table($collection)->whereIn($column, $values)->count();
+		return $this->table($collection)->whereIn($column, $values)->count();
+	}
+
+	/**
+	 * Get a query builder for the given table.
+	 *
+	 * @param  string  $table
+	 * @return Illuminate\Database\Query\Builder
+	 */
+	protected function table($table)
+	{
+		return $this->db->connection($this->connection)->table($table);
+	}
+
+	/**
+	 * Set the connection to be used.
+	 *
+	 * @param  string  $connection
+	 * @return void
+	 */
+	public function setConnection($connection)
+	{
+		$this->connection = $connection;
 	}
 
 }
