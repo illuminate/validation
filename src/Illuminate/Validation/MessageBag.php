@@ -14,7 +14,7 @@ class MessageBag implements Countable {
 	 *
 	 * @var string
 	 */	
-	protected $format = ':message';
+	protected $format = '<span class="help-inline">:message</span>';
 
 	/**
 	 * Add a message to the bag.

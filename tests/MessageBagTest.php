@@ -17,6 +17,7 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 	public function testMessagesAreAdded()
 	{
 		$container = new MessageBag;
+		$container->setFormat(':message');
 		$container->add('foo', 'bar');
 		$container->add('foo', 'baz');
 		$container->add('boom', 'bust');
@@ -29,6 +30,7 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 	public function testGetReturnsArrayOfMessagesByKey()
 	{
 		$container = new MessageBag;
+		$container->setFormat(':message');
 		$container->add('foo', 'bar');
 		$container->add('foo', 'baz');
 		$this->assertEquals(array('bar', 'baz'), $container->get('foo'));
@@ -38,6 +40,7 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 	public function testFirstReturnsSingleMessage()
 	{
 		$container = new MessageBag;
+		$container->setFormat(':message');
 		$container->add('foo', 'bar');
 		$container->add('foo', 'baz');
 		$messages = $container->getMessages();
@@ -48,6 +51,7 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 	public function testHasIndicatesExistence()
 	{
 		$container = new MessageBag;
+		$container->setFormat(':message');
 		$container->add('foo', 'bar');
 		$this->assertTrue($container->has('foo'));
 		$this->assertFalse($container->has('bar'));
@@ -57,6 +61,7 @@ class MessageBagTest extends PHPUnit_Framework_TestCase {
 	public function testAllReturnsAllMessages()
 	{
 		$container = new MessageBag;
+		$container->setFormat(':message');
 		$container->add('foo', 'bar');
 		$container->add('boom', 'baz');
 		$this->assertEquals(array('bar', 'baz'), $container->all());
