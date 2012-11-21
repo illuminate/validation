@@ -1,6 +1,7 @@
 <?php namespace Illuminate\Validation;
 
 use Closure;
+use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -23,7 +24,7 @@ class Validator {
 	/**
 	 * The message bag instance.
 	 *
-	 * @var Illuminate\Validation\MessageBag
+	 * @var Illuminate\Support\MessageBag
 	 */
 	protected $messages;
 
@@ -1167,7 +1168,7 @@ class Validator {
 	/**
 	 * Get the message container for the validator.
 	 *
-	 * @return Illuminate\Validation\MessageBag
+	 * @return Illuminate\Support\MessageBag
 	 */
 	public function getMessages()
 	{
