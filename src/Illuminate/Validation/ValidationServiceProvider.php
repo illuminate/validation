@@ -7,14 +7,13 @@ class ValidationServiceProvider extends ServiceProvider {
 	/**
 	 * Register the service provider.
 	 *
-	 * @param  Illuminate\Foundation\Application  $app
 	 * @return void
 	 */
-	public function register($app)
+	public function register()
 	{
-		$this->registerPresenceVerifier($app);
+		$this->registerPresenceVerifier();
 
-		$app['validator'] = $app->share(function($app)
+		$this->app['validator'] = $this->app->share(function($app)
 		{
 			$validator = new Factory($app['translator']);
 
@@ -33,12 +32,11 @@ class ValidationServiceProvider extends ServiceProvider {
 	/**
 	 * Register the database presence verifier.
 	 *
-	 * @param  Illuminate\Foundation\Application  $app
 	 * @return void
 	 */
-	protected function registerPresenceVerifier($app)
+	protected function registerPresenceVerifier()
 	{
-		$app['validation.presence'] = $app->share(function($app)
+		$this->app['validation.presence'] = $this->app->share(function($app)
 		{
 			return new DatabasePresenceVerifier($app['db']);
 		});
