@@ -5,6 +5,13 @@ use Illuminate\Support\ServiceProvider;
 class ValidationServiceProvider extends ServiceProvider {
 
 	/**
+	 * Indicates if loading of the provider is deferred.
+	 *
+	 * @var bool
+	 */
+	protected $defer = true;
+
+	/**
 	 * Register the service provider.
 	 *
 	 * @return void
@@ -40,6 +47,16 @@ class ValidationServiceProvider extends ServiceProvider {
 		{
 			return new DatabasePresenceVerifier($app['db']);
 		});
+	}
+
+	/**
+	 * Get the services provided by the provider.
+	 *
+	 * @return array
+	 */
+	public function provides()
+	{
+		return array('validator', 'validation.presence');
 	}
 
 }
