@@ -765,7 +765,7 @@ class Validator {
 		// There are three different types of size validations. The attribute may be
 		// either a number, file, or string so we will check a few things to know
 		// which type of value it is and return the correct line for that type.
-		$type = $this->getAttribtueType($attribute);
+		$type = $this->getAttributeType($attribute);
 
 		$key = "validation.{$lowerRule}.{$type}";
 
@@ -778,7 +778,7 @@ class Validator {
 	 * @param  string  $attribute
 	 * @return string
 	 */
-	protected function getAttribtueType($attribute)
+	protected function getAttributeType($attribute)
 	{
 		// We assume that the attributes present in the file array are files so that
 		// means that if the attribute does not have a numeric rule and the files
