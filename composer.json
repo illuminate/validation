@@ -9,16 +9,21 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "illuminate/support": ">=1.0.0",
-        "symfony/http-foundation": "2.*",
-        "symfony/translation": "2.*"
+        "illuminate/support": "1.2.*",
+        "symfony/http-foundation": "2.1.*",
+        "symfony/translation": "2.1.*"
     },
     "require-dev": {
-        "illuminate/database": ">=1.0.0",
-        "mockery/mockery": "0.7.*"
+        "illuminate/database": "1.2.*",
+        "mockery/mockery": "0.7.2"
     },
     "autoload": {
         "classmap": ["src/"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2-dev"
+        }
     },
     "minimum-stability": "dev"
 }
