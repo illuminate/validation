@@ -50,6 +50,13 @@ class Validator {
 	protected $rules;
 
 	/**
+	 * The custom messages for failed rules.
+	 * 
+	 * @var array
+	 */
+	protected $customMessages;
+
+	/**
 	 * All of the custom validator extensions.
 	 *
 	 * @var array
@@ -76,14 +83,15 @@ class Validator {
 	 * @param  Symfony\Component\Translation\TranslatorInterface  $translator
 	 * @param  array  $data
 	 * @param  array  $rules
+	 * @param  array  $customMessages
 	 * @return void
 	 */
-	public function __construct(TranslatorInterface $translator, $data, $rules, $messages = array())
+	public function __construct(TranslatorInterface $translator, $data, $rules, $customMessages = array())
 	{
 		$this->data = $data;
 		$this->translator = $translator;
 		$this->rules = $this->explodeRules($rules);
-		$this->customMessages = $messages;
+		$this->customMessages = $customMessages;
 	}
 
 	/**
