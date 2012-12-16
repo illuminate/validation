@@ -50,6 +50,13 @@ class Validator {
 	protected $rules;
 
 	/**
+	 * The custom messages for failed rules.
+	 * 
+	 * @var array
+	 */
+	protected $customMessages;
+
+	/**
 	 * All of the custom validator extensions.
 	 *
 	 * @var array
@@ -76,13 +83,15 @@ class Validator {
 	 * @param  Symfony\Component\Translation\TranslatorInterface  $translator
 	 * @param  array  $data
 	 * @param  array  $rules
+	 * @param  array  $customMessages
 	 * @return void
 	 */
-	public function __construct(TranslatorInterface $translator, $data, $rules)
+	public function __construct(TranslatorInterface $translator, $data, $rules, $customMessages = array())
 	{
 		$this->data = $data;
 		$this->translator = $translator;
 		$this->rules = $this->explodeRules($rules);
+		$this->customMessages = $customMessages;
 	}
 
 	/**
@@ -715,12 +724,21 @@ class Validator {
 	 */
 	protected function getMessage($attribute, $rule)
 	{
-		// First we will retrieve the custom message for the validation rule if one
-		// exists. If a custom validation message is being used we'll return the
-		// custom message, otherwise we'll keep searching for a valid message.
+		// First we will look for a custom validation rule that was given to the validator
+		// at run time. An array of messages can be given to the validator, if we find
+		// a message we'll run it through the translation service.
 		$lowerRule = strtolower($rule);
 
-		$customKey = "validation.custom.{$attribute}.{$lowerRule}";
+		$customKey = "{$attribute}.{$lowerRule}";
+
+		if (isset($this->customMessages[$customKey]))
+		{
+			return $this->translator->trans($this->customMessages[$customKey]);
+		}
+
+		// Now we will look for a custom validation rule in the language file. If we have
+		// a message we'll use that, otherwise we need to use a default message.
+		$customKey = "validation.custom.{$customKey}";
 
 		$customMessage = $this->translator->trans($customKey);
 
@@ -1173,6 +1191,16 @@ class Validator {
 	public function getMessages()
 	{
 		return $this->messages;
+	}
+
+	/**
+	 * Get the custom messages for the validator.
+	 * 
+	 * @return array
+	 */
+	public function getCustomMessages()
+	{
+		return $this->customMessages;
 	}
 
 	/**
