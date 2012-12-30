@@ -230,7 +230,7 @@ class Validator {
 	{
 		if (empty($value))
 		{
-			return false;
+			return is_array($value) ? true : (is_null($value) ? false : true);
 		}
 		elseif (is_string($value) and trim($value) === '')
 		{
