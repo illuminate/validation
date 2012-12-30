@@ -228,7 +228,7 @@ class Validator {
 	 */
 	protected function validateRequired($attribute, $value)
 	{
-		if (is_null($value))
+		if (empty($value))
 		{
 			return false;
 		}
