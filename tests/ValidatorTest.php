@@ -492,6 +492,9 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	{
 		return array(
 			array('aslsdlsk'),
+			array('google.com'),
+			array('foo://bar'),
+			array('javascript://test%0Aalert(321)'),
 		);
 	}
 
