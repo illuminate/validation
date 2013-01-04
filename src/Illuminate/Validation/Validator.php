@@ -50,6 +50,13 @@ class Validator {
 	protected $rules;
 
 	/**
+	 * The array of custom error messages.
+	 *
+	 * @var array
+	 */
+	protected $customMessages = array();
+
+	/**
 	 * All of the custom validator extensions.
 	 *
 	 * @var array
@@ -83,11 +90,13 @@ class Validator {
 	 * @param  Symfony\Component\Translation\TranslatorInterface  $translator
 	 * @param  array  $data
 	 * @param  array  $rules
+	 * @param  array  $messages
 	 * @return void
 	 */
-	public function __construct(TranslatorInterface $translator, $data, $rules)
+	public function __construct(TranslatorInterface $translator, $data, $rules, $messages = array())
 	{
 		$this->translator = $translator;
+		$this->customMessages = $messages;
 		$this->data = $this->parseData($data);
 		$this->rules = $this->explodeRules($rules);
 	}
@@ -813,10 +822,17 @@ class Validator {
 	 */
 	protected function getMessage($attribute, $rule)
 	{
+		$lowerRule = strtolower(snake_case($rule));
+
+		$inlineKey = "{$attribute}.{$lowerRule}";
+
 		// First we will retrieve the custom message for the validation rule if one
 		// exists. If a custom validation message is being used we'll return the
 		// custom message, otherwise we'll keep searching for a valid message.
-		$lowerRule = strtolower(snake_case($rule));
+		if (isset($this->customMessages[$inlineKey]))
+		{
+			return $this->customMessages[$inlineKey];
+		}
 
 		$customKey = "validation.custom.{$attribute}.{$lowerRule}";
 
