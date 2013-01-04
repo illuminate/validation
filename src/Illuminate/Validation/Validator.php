@@ -271,7 +271,7 @@ class Validator {
 		}
 		elseif ($value instanceof File)
 		{
-			return (string) $value->getPath() !== '';
+			return (string) $value->getPath() != '';
 		}
 
 		return true;
@@ -289,12 +289,12 @@ class Validator {
 	{
 		$other = $parameters[0];
 
-		if (! isset($this->data[$other]))
+		if ( ! isset($this->data[$other]) and ! isset($this->files[$other]))
 		{
 			return true;
 		}
 
-		if (! $this->validateRequired($other, $this->data[$other]))
+		if ( ! $this->validateRequired($other, $this->getValue($other)))
 		{
 			return true;
 		}

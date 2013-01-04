@@ -86,33 +86,33 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	public function testValidateRequiredWith()
 	{
 		$trans = $this->getRealTranslator();
-		$v = new Validator($trans, array('first' => 'Taylor'), array('last' => 'RequiredWith:first'));
+		$v = new Validator($trans, array('first' => 'Taylor'), array('last' => 'required_with:first'));
 		$this->assertFalse($v->passes());
 
-		$v = new Validator($trans, array('first' => 'Taylor', 'last' => ''), array('last' => 'RequiredWith:first'));
+		$v = new Validator($trans, array('first' => 'Taylor', 'last' => ''), array('last' => 'required_with:first'));
 		$this->assertFalse($v->passes());
 
-		$v = new Validator($trans, array('first' => ''), array('last' => 'RequiredWith:first'));
+		$v = new Validator($trans, array('first' => ''), array('last' => 'required_with:first'));
 		$this->assertTrue($v->passes());
 
-		$v = new Validator($trans, array(), array('last' => 'RequiredWith:first'));
+		$v = new Validator($trans, array(), array('last' => 'required_with:first'));
 		$this->assertTrue($v->passes());
 
-		$v = new Validator($trans, array('first' => 'Taylor', 'last' => 'Otwell'), array('last' => 'RequiredWith:first'));
+		$v = new Validator($trans, array('first' => 'Taylor', 'last' => 'Otwell'), array('last' => 'required_with:first'));
 		$this->assertTrue($v->passes());
 
 		$file = new File('', false);
-		$v = new Validator($trans, array('file' => $file, 'foo' => ''), array('foo' => 'RequiredWith:file'));
+		$v = new Validator($trans, array('file' => $file, 'foo' => ''), array('foo' => 'required_with:file'));
 		$this->assertTrue($v->passes());
 
 		$file = new File(__FILE__, false);
 		$foo  = new File(__FILE__, false);
-		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'RequiredWith:file'));
+		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'required_with:file'));
 		$this->assertTrue($v->passes());
 
 		$file = new File(__FILE__, false);
 		$foo  = new File('', false);
-		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'RequiredWith:file'));
+		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'required_with:file'));
 		$this->assertFalse($v->passes());
 	}
 
