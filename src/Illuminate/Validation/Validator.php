@@ -1037,9 +1037,15 @@ class Validator {
 			$parameters = str_getcsv(substr($rule, $colon + 1));
 		}
 
-		$rule = is_numeric($colon) ? substr($rule, 0, $colon) : $rule;
+		// If we found a colon in the rule string it means a parameter has been
+		// specified, and we need to extract the "plain" rule name from this
+		// string so that we can call the proper validation method for it.
+		if (is_numeric($colon))
+		{
+			$rule = substr($rule, 0, $colon);
+		}
 
-		return array($rule, $parameters);
+		return array(camel_case($rule), $parameters);
 	}
 
 	/**
