@@ -1170,7 +1170,7 @@ class Validator {
 	 *
 	 * @return Illuminate\Support\MessageBag
 	 */
-	public function getMessages()
+	public function messages()
 	{
 		return $this->messages;
 	}
