@@ -80,9 +80,33 @@ class Validator {
 	 */
 	public function __construct(TranslatorInterface $translator, $data, $rules)
 	{
-		$this->data = $data;
 		$this->translator = $translator;
+		$this->data = $this->parseData($data);
 		$this->rules = $this->explodeRules($rules);
+	}
+
+	/**
+	 * Parse the data and hydrate the files array.
+	 *
+	 * @param  array  $data
+	 * @return array
+	 */
+	protected function parseData(array $data)
+	{
+		foreach ($data as $key => $value)
+		{
+			// If this value is an instance of the HttpFoundation File class we will
+			// remove it from the data array and add it to the files array, which
+			// is used to conveniently separate out the files from other datas.
+			if ($value instanceof File)
+			{
+				$this->files[$key] = $value;
+
+				unset($data[$key]);
+			}
+		}
+
+		return $data;
 	}
 
 	/**
