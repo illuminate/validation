@@ -458,14 +458,41 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 
-	public function testValidateUrl()
+	/**
+	 * @dataProvider validUrls
+	 */
+	public function testValidateUrlWithValidUrls($validUrl)
 	{
 		$trans = $this->getRealTranslator();
-		$v = new Validator($trans, array('x' => 'aslsdlks'), array('x' => 'Url'));
-		$this->assertFalse($v->passes());
-
-		$v = new Validator($trans, array('x' => 'http://google.com'), array('x' => 'Url'));
+		$v = new Validator($trans, array('x' => $url), array('x' => 'Url'));
 		$this->assertTrue($v->passes());
+	}
+	
+	
+	/**
+	 * @dataProvider invalidUrls
+	 */
+	public function testValidateUrlWithInvalidUrls($invalidUrl)
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('x' => $invalidUrl), array('x' => 'Url'));
+		$this->assertFalse($v->passes());
+	}
+	
+	
+	public function validUrls()
+	{
+		return array(
+			array('http://google.com'),
+		);
+	}
+	
+	
+	public function invalidUrls()
+	{
+		return array(
+			array('aslsdlsk'),
+		);
 	}
 
 
