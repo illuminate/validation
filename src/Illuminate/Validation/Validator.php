@@ -93,6 +93,8 @@ class Validator {
 	 */
 	protected function parseData(array $data)
 	{
+		$this->files = array();
+
 		foreach ($data as $key => $value)
 		{
 			// If this value is an instance of the HttpFoundation File class we will
@@ -1113,6 +1115,17 @@ class Validator {
 	public function getData()
 	{
 		return $this->data;
+	}
+
+	/**
+	 * Set the data under validation.
+	 *
+	 * @param  array  $data
+	 * @return void
+	 */
+	public function setData(array $data)
+	{
+		$this->data = $this->parseData($data);
 	}
 
 	/**
