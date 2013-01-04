@@ -1050,7 +1050,7 @@ class Validator {
 	 */
 	protected function replaceRequiredWith($message, $attribute, $rule, $parameters)
 	{
-		return str_replace(':values', implode(', ', $parameters), $message);
+		return str_replace(':values', implode(' / ', $parameters), $message);
 	}
 
 	/**
