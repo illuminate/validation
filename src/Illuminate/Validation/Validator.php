@@ -1026,7 +1026,7 @@ class Validator {
 	}
 
 	/**
-	 * Replace all place-holders for the not_in rule.
+	 * Replace all place-holders for the mimes rule.
 	 *
 	 * @param  string  $message
 	 * @param  string  $attribute
@@ -1035,6 +1035,20 @@ class Validator {
 	 * @return string
 	 */
 	protected function replaceMimes($message, $attribute, $rule, $parameters)
+	{
+		return str_replace(':values', implode(', ', $parameters), $message);
+	}
+
+	/**
+	 * Replace all place-holders for the required_with rule.
+	 *
+	 * @param  string  $message
+	 * @param  string  $attribute
+	 * @param  string  $rule
+	 * @param  array   $parameters
+	 * @return string
+	 */
+	protected function replaceRequiredWith($message, $attribute, $rule, $parameters)
 	{
 		return str_replace(':values', implode(', ', $parameters), $message);
 	}
