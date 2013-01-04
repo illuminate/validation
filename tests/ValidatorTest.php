@@ -83,6 +83,38 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($v->passes());
 	}
 
+	public function testValidateRequiredWith()
+	{
+		$trans = $this->getRealTranslator();
+		$v = new Validator($trans, array('first' => 'Taylor'), array('last' => 'RequiredWith:first'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('first' => 'Taylor', 'last' => ''), array('last' => 'RequiredWith:first'));
+		$this->assertFalse($v->passes());
+
+		$v = new Validator($trans, array('first' => ''), array('last' => 'RequiredWith:first'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array(), array('last' => 'RequiredWith:first'));
+		$this->assertTrue($v->passes());
+
+		$v = new Validator($trans, array('first' => 'Taylor', 'last' => 'Otwell'), array('last' => 'RequiredWith:first'));
+		$this->assertTrue($v->passes());
+
+		$file = new File('', false);
+		$v = new Validator($trans, array('file' => $file, 'foo' => ''), array('foo' => 'RequiredWith:file'));
+		$this->assertTrue($v->passes());
+
+		$file = new File(__FILE__, false);
+		$foo  = new File(__FILE__, false);
+		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'RequiredWith:file'));
+		$this->assertTrue($v->passes());
+
+		$file = new File(__FILE__, false);
+		$foo  = new File('', false);
+		$v = new Validator($trans, array('file' => $file, 'foo' => $foo), array('foo' => 'RequiredWith:file'));
+		$this->assertFalse($v->passes());
+	}
 
 	public function testValidateConfirmed()
 	{
