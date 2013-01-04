@@ -4,8 +4,9 @@ use Closure;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Translation\TranslatorInterface;
+use Illuminate\Support\Contracts\MessageProviderInterface;
 
-class Validator {
+class Validator implements MessageProviderInterface {
 
 	/**
 	 * The Translator implementation.
@@ -1320,6 +1321,16 @@ class Validator {
 	public function messages()
 	{
 		return $this->messages;
+	}
+
+	/**
+	 * Get the messages for the instance.
+	 *
+	 * @return ILluminate\Support\MessageBag
+	 */
+	public function getMessageBag()
+	{
+		return $this->messages();
 	}
 
 	/**
