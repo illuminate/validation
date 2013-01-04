@@ -464,7 +464,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	public function testValidateUrlWithValidUrls($validUrl)
 	{
 		$trans = $this->getRealTranslator();
-		$v = new Validator($trans, array('x' => $url), array('x' => 'Url'));
+		$v = new Validator($trans, array('x' => $validUrl), array('x' => 'Url'));
 		$this->assertTrue($v->passes());
 	}
 	
