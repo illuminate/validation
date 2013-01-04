@@ -742,7 +742,7 @@ class Validator {
 		// First we will retrieve the custom message for the validation rule if one
 		// exists. If a custom validation message is being used we'll return the
 		// custom message, otherwise we'll keep searching for a valid message.
-		$lowerRule = strtolower($rule);
+		$lowerRule = strtolower(snake_case($rule));
 
 		$customKey = "validation.custom.{$attribute}.{$lowerRule}";
 
@@ -784,7 +784,7 @@ class Validator {
 	 */
 	protected function getSizeMessage($attribute, $rule)
 	{
-		$lowerRule = strtolower($rule);
+		$lowerRule = strtolower(snake_case($rule));
 
 		// There are three different types of size validations. The attribute may be
 		// either a number, file, or string so we will check a few things to know
