@@ -278,6 +278,25 @@ class Validator {
 	}
 
 	/**
+	 * Determine if any of the given attributes fail the required test.
+	 *
+	 * @param  array  $attributes
+	 * @return bool
+	 */
+	protected function anyFailingRequired(array $attributes)
+	{
+		foreach ($attributes as $key)
+		{
+			if ( ! $this->validateRequired($key, $this->getValue($key)))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Validate that an attribute exists when another attribute exists
 	 *
 	 * @param  string  $attribute
@@ -289,17 +308,38 @@ class Validator {
 	{
 		$other = $parameters[0];
 
-		if ( ! isset($this->data[$other]) and ! isset($this->files[$other]))
+		if ($this->getPresentCount($parameters) != count($parameters))
 		{
 			return true;
 		}
 
-		if ( ! $this->validateRequired($other, $this->getValue($other)))
+		if ($this->anyFailingRequired($parameters))
 		{
 			return true;
 		}
 
 		return $this->validateRequired($attribute, $value);
+	}
+
+	/**
+	 * Get the number of attributes in a list that are present.
+	 *
+	 * @param  array  $attributes
+	 * @return int
+	 */
+	protected function getPresentCount($attributes)
+	{
+		$count = 0;
+
+		foreach ($attributes as $key)
+		{
+			if (isset($this->data[$key]) or isset($this->files[$key]))
+			{
+				$count++;
+			}
+		}
+
+		return $count;
 	}
 
 	/**
