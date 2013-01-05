@@ -493,6 +493,17 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		return array(
 			array('aslsdlsk'),
 			array('google.com'),
+			array('://google.com'),
+			array('http ://google.com'),
+			array('http:/google.com'),
+			array('http://goog_le.com'),
+			array('http://google.com::aa'),
+			array('http://google.com:aa'),
+			array('http://laravel.com?'),
+			array('http://laravel.com/?'),
+			array('http://laravel.com#'),
+			array('http://127.0.0.1:aa'),
+			array('http://[::1'),
 			array('foo://bar'),
 			array('javascript://test%0Aalert(321)'),
 		);
