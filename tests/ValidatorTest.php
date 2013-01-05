@@ -483,7 +483,15 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	public function validUrls()
 	{
 		return array(
+			array('http://a.pl'),
+			array('http://localhost/url.php'),
+			array('http://local.dev'),
 			array('http://google.com'),
+			array('https://google.com'),
+			array('http://illuminate.dev'),
+			array('http://localhost'),
+			array('http://президент.рф/'),
+			array('http://xn--d1abbgf6aiiy.xn--p1ai/'),
 		);
 	}
 	
