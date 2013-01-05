@@ -491,6 +491,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			array('http://illuminate.dev'),
 			array('http://localhost'),
 			array('http://президент.рф/'),
+			array('http://스타벅스코리아.com'),
 			array('http://xn--d1abbgf6aiiy.xn--p1ai/'),
 		);
 	}
