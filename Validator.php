@@ -99,7 +99,7 @@ class Validator implements MessageProviderInterface {
 	 *
 	 * @var array
 	 */
-	protected $implicitRules = array('Required', 'RequiredWith', 'RequiredWithout', 'RequiredIf', 'Accepted');
+	protected $implicitRules = array('Required', 'RequiredWith', 'RequiredWithout', 'RequiredIf', 'Accepted', 'Boolean');
 
 	/**
 	 * Create a new Validator instance.
@@ -473,6 +473,22 @@ class Validator implements MessageProviderInterface {
 	protected function validateAccepted($attribute, $value)
 	{
 		$acceptable = array('yes', 'on', 1);
+
+		return $this->validateRequired($attribute, $value) and in_array($value, $acceptable);
+	}
+
+	/**
+	 * Validate that an attribute was "accepted".
+	 *
+	 * This validation rule implies the attribute is "required".
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function validateBoolean($attribute, $value)
+	{
+		$acceptable = array('true', 'yes', 'on', 1, 'false', 'no', 'off', 0);
 
 		return $this->validateRequired($attribute, $value) and in_array($value, $acceptable);
 	}
