@@ -419,7 +419,7 @@ class Validator implements ValidatorContract {
 	 */
 	protected function presentOrRuleIsImplicit($rule, $attribute, $value)
 	{
-		return $this->validateRequired($attribute, $value) || $this->isImplicit($rule);
+		return $this->isPresent($attribute, $value) || $this->isImplicit($rule);
 	}
 
 	/**
@@ -508,6 +508,31 @@ class Validator implements ValidatorContract {
 			return false;
 		}
 		elseif (is_string($value) && trim($value) === '')
+		{
+			return false;
+		}
+		elseif (is_array($value) && count($value) < 1)
+		{
+			return false;
+		}
+		elseif ($value instanceof File)
+		{
+			return (string) $value->getPath() != '';
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate that a attribute is present.
+	 *
+	 * @param  string  $attribute
+	 * @param  mixed   $value
+	 * @return bool
+	 */
+	protected function isPresent($attribute, $value)
+	{
+		if (is_null($value))
 		{
 			return false;
 		}
