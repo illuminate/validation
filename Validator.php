@@ -1614,6 +1614,31 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Validate the date is before or equal to a given date.
+     *
+     * @param  string $attribute
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
+
+    protected function validateBeforeEqual($attribute, $value, $parameters)
+    {
+
+        $this->requireParameterCount(1, $parameters, 'before_equal');
+
+        if ($format = $this->getDateFormat($attribute)) {
+            return $this->validateBeforeWithFormat($format, $value, $parameters);
+        }
+
+        if (! ($date = strtotime($parameters[0]))) {
+            return strtotime($value) <= strtotime($this->getValue($parameters[0]));
+        }
+
+        return strtotime($value) <= $date;
+    }
+
+    /**
      * Validate the date is before a given date with a given format.
      *
      * @param  string  $format
@@ -1649,6 +1674,29 @@ class Validator implements ValidatorContract
         }
 
         return strtotime($value) > $date;
+    }
+
+    /**
+     * Validate the date is after or equal to a given date.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @param  array   $parameters
+     * @return bool
+     */
+    protected function validateAfterEqual($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'after');
+
+        if ($format = $this->getDateFormat($attribute)) {
+            return $this->validateAfterWithFormat($format, $value, $parameters);
+        }
+
+        if (! ($date = strtotime($parameters[0]))) {
+            return strtotime($value) >= strtotime($this->getValue($parameters[0]));
+        }
+
+        return strtotime($value) >= $date;
     }
 
     /**
