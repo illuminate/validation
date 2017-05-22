@@ -2625,6 +2625,20 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Replace all place-holders for the after or equal rule.
+     *
+     * @param  string  $message
+     * @param  string  $attribute
+     * @param  string  $rule
+     * @param  array   $parameters
+     * @return string
+     */
+    protected function replaceAfterOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return $this->replaceBefore($message, $attribute, $rule, $parameters);
+    }
+
+    /**
      * Get all attributes.
      *
      * @return array
