@@ -401,9 +401,7 @@ trait ValidatesAttributes
 
         $format = $parameters[0];
 
-        $date = DateTime::createFromFormat('!'.$format, $value);
-
-        return $date && $date->format($format) == $value;
+        return DateTime::createFromFormat('!'.$format, $value);
     }
 
     /**
