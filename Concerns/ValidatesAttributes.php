@@ -291,6 +291,24 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validates for one or more groups of one or more letters or numbers (or
+     * letter component marks), each separated by a single separator (space
+     * equivalent in any script, apostrophe, underscore or dash).
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @return bool
+     */
+    public function validateAlphaName($attribute, $value)
+    {
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+
+        return preg_match('/^(?:[\pL\pM\pN]+[\pZ\'_-])*[\pL\pM\pN]+$/u', $value) > 0;
+    }
+
+    /**
      * Validate that an attribute contains only alpha-numeric characters.
      *
      * @param  string  $attribute
