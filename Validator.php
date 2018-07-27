@@ -624,6 +624,20 @@ class Validator implements ValidatorContract
             $this->data, $this->attributesThatHaveMessages()
         );
     }
+    
+    /**
+     * Returns the data which was valid and included in rules
+     * @return array
+     * @author 2582308253@qq.com
+     * @copyright 2018年7月27日 下午1:15:31
+     */
+    public function validated() {
+        if (! $this->messages) {
+            $this->passes();
+        }
+        
+        return array_intersect_key($this->data, $this->rules);
+    }
 
     /**
      * Generate an array of all attributes that have messages.
