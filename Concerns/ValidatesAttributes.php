@@ -291,9 +291,9 @@ trait ValidatesAttributes
     }
 
     /**
-     * Validates for one or more groups of one or more letters or numbers (or
-     * letter component marks), each separated by a single separator (space
-     * equivalent in any script, apostrophe, underscore or dash).
+     * Validate that an attribute is comprised of groups
+     * of alphanumeric characters separated by single
+     * spaces, apostrophes, underscores, or dashes.
      *
      * @param  string  $attribute
      * @param  mixed   $value
