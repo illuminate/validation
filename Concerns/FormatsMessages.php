@@ -39,13 +39,16 @@ trait FormatsMessages
         // and rule. This allows the developer to specify specific messages for
         // only some attributes and rules that need to get specially formed.
         if ($customMessage !== $customKey) {
+            if ($this->isSizeRule($rule)) {
+                return $this->getCustomSizeMessage($attribute, $rule);
+            }
             return $customMessage;
         }
 
         // If the rule being validated is a "size" rule, we will need to gather the
         // specific error message for the type of attribute being validated such
         // as a number, file or string which all have different message types.
-        elseif (in_array($rule, $this->sizeRules)) {
+        elseif ($this->isSizeRule($rule)) {
             return $this->getSizeMessage($attribute, $rule);
         }
 
@@ -74,7 +77,7 @@ trait FormatsMessages
     {
         $inlineEntry = $this->getFromLocalArray($attribute, Str::snake($rule));
 
-        return is_array($inlineEntry) && in_array($rule, $this->sizeRules)
+        return is_array($inlineEntry) && $this->isSizeRule($rule)
                     ? $inlineEntry[$this->getAttributeType($attribute)]
                     : $inlineEntry;
     }
@@ -175,6 +178,27 @@ trait FormatsMessages
         $type = $this->getAttributeType($attribute);
 
         $key = "validation.{$lowerRule}.{$type}";
+
+        return $this->translator->get($key);
+    }
+
+    /**
+     * Get the proper error message for an attribute and size rule when using custom messages.
+     *
+     * @param  string  $attribute
+     * @param  string  $rule
+     * @return string
+     */
+    protected function getCustomSizeMessage($attribute, $rule)
+    {
+        $lowerRule = Str::snake($rule);
+
+        // There are three different types of size validations. The attribute may be
+        // either a number, file, or string so we will check a few things to know
+        // which type of value it is and return the correct line for that type.
+        $type = $this->getAttributeType($attribute);
+
+        $key = "validation.custom.{$attribute}.{$lowerRule}.{$type}";
 
         return $this->translator->get($key);
     }
@@ -396,5 +420,16 @@ trait FormatsMessages
         [$class, $method] = Str::parseCallback($callback, 'replace');
 
         return $this->container->make($class)->{$method}(...array_slice(func_get_args(), 1));
+    }
+
+    /***
+     * Check if a given rule is a size rule.
+     *
+     * @param string $rule
+     * @return bool
+     */
+    private function isSizeRule(string $rule)
+    {
+        return in_array($rule, $this->sizeRules);
     }
 }
